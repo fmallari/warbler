@@ -65,8 +65,8 @@ def signup():
     If there already is a user with that username: flash message
     and re-present form.
     """
-    
-
+    if CURR_USER_KEY in session:
+        del session [CURR_USER_KEY]
     form = UserAddForm()
 
     if form.validate_on_submit():
@@ -115,7 +115,9 @@ def login():
 def logout():
     """Handle logout of user."""
 
-    # IMPLEMENT THIS
+    do_logout()
+    flash("You have successfully logged out.", 'success')
+    return redirect("/login")
 
 
 ##############################################################################
