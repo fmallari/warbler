@@ -522,6 +522,38 @@ p.card-bio {
   margin-bottom: 10px;
 }
 
+/* ================================ like / unlike */
+
+.like-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 4px 8px;
+  opacity: 0.65;
+  transition: transform 0.08s ease, opacity 0.15s ease;
+}
+
+.like-btn:hover {
+  opacity: 1;
+  transform: scale(1.06);
+}
+
+.like-btn.liked {
+  opacity: 1;
+  font-weight: 700;
+}
+
+.like-form {
+  margin-left: auto; /* pushes button to the right inside flex row */
+  position: relative;
+  z-index: 3;
+}
+.like-count {
+  margin-left: 6px;
+  font-weight: 700;
+}
+
 /* ================================ 404 page */
 
 .message-404 {

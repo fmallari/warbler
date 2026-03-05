@@ -3,9 +3,9 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
-
+from sqlalchemy import func
 from forms import UserAddForm, UserEditForm, LoginForm, MessageForm
-from models import db, connect_db, User, Message
+from models import db, connect_db, User, Message, Likes
 
 CURR_USER_KEY = "curr_user"
 
@@ -301,6 +301,40 @@ def messages_destroy(message_id):
 
     return redirect(f"/users/{g.user.id}")
 
+##############################################################################
+# Like and unlike button route feature 
+
+@app.route('/users/add_like/<int:message_id>', methods=["POST"])
+def add_like(message_id):
+    """Add a like for the currently-logged-in user."""
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    msg = Message.query.get_or_404(message_id)
+
+    """ preventing duplicate likes """
+    already_liked = any(like.id == msg.id for like in g.user.likes)
+    if not already_liked:
+        g.user.likes.append(msg)
+        db.session.commit()
+
+    return redirect(request.referrer or "/")
+
+@app.route('/users/remove_like/<int:message_id>', methods=["POST"])
+def remove_like(message_id):
+    """Unlike a message"""
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    msg = Message.query.get_or_404(message_id)
+
+    if msg in g.user.likes:
+        g.user.likes.remove(msg)
+        db.session.commit()
+
+    return redirect(request.referrer or "/")
 
 ##############################################################################
 # Homepage and error pages
@@ -309,22 +343,37 @@ def messages_destroy(message_id):
 @app.route('/')
 def homepage():
     """Show homepage:
-
-    - anon users: no messages
-    - logged in: 100 most recent messages of followed_users
+    - anon users: landing page
+    - logged in: 100 most recent messages
     """
+    print(">>>HIT HOMEPAGE ROUTE<<<")
 
-    if g.user:
-        messages = (Message
-                    .query
-                    .order_by(Message.timestamp.desc())
-                    .limit(100)
-                    .all())
-
-        return render_template('home.html', messages=messages)
-
-    else:
+    if not g.user:
         return render_template('home-anon.html')
+
+    messages = (Message.query
+                .order_by(Message.timestamp.desc())
+                .limit(100)
+                .all())
+
+    # More reliable than g.user.likes after redirects
+    liked_message_ids = {
+        like.message_id
+        for like in Likes.query.filter_by(user_id=g.user.id).all()
+    }
+
+    # message_id for count 
+    counts = (db.session.query(Likes.message_id, func.count(Likes.id))
+                .group_by(Likes.message_id)
+                .all())
+    like_counts = {message_id: count for message_id, count in counts}
+
+    return render_template(
+        'home.html',
+        messages=messages,
+        liked_message_ids=liked_message_ids,
+        like_counts=like_counts
+    )
 
 
 ##############################################################################
