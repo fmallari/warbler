@@ -336,6 +336,26 @@ def remove_like(message_id):
 
     return redirect(request.referrer or "/")
 
+# Route to show messages liked by a user
+
+@app.route('/users/<int:user_id>/likes')
+def show_likes(user_id):
+    """Show messages liked by this user."""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    user = User.query.get_or_404(user_id)
+
+    likes = (Message.query
+             .join(Likes, Likes.message_id == Message.id)
+             .filter(Likes.user_id == user.id)
+             .order_by(Message.timestamp.desc())
+             .all())
+
+    return render_template('users/likes.html', user=user, messages=likes)
+
 ##############################################################################
 # Homepage and error pages
 
