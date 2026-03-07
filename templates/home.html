@@ -1,42 +1,44 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %}
+{% block content %}
 <div class="row">
+
   <aside class="col-md-4 col-lg-3 col-sm-12" id="home-aside">
-    <div class="card user-card">
+    <div class="card user-card sidebar-card">
       <div>
         <div class="image-wrapper">
-          <img src="{{ g.user.header_image_url }}" alt="" class="card-hero" />
+          <img src="{{ g.user.header_image_url }}" alt="" class="card-hero">
         </div>
-        <a href="/users/{{ g.user.id }}" class="card-link">
-          <img
-            src="{{ g.user.image_url }}"
-            alt="Image for {{ g.user.username }}"
-            class="card-image"
-          />
-          <p>@{{ g.user.username }}</p>
-        </a>
+
+        <div class="sidebar-profile">
+          <a href="/users/{{ g.user.id }}" class="card-link">
+            <img
+              src="{{ g.user.image_url }}"
+              alt="Image for {{ g.user.username }}"
+              class="card-image"
+            >
+            <div class="sidebar-user-meta">
+              <p class="sidebar-handle">@{{ g.user.username }}</p>
+            </div>
+          </a>
+        </div>
+
         <ul class="user-stats nav nav-pills">
           <li class="stat">
             <p class="small">Messages</p>
             <h4>
-              <a href="/users/{{ g.user.id }}"
-                >{{ g.user.messages | length }}</a
-              >
+              <a href="/users/{{ g.user.id }}">{{ g.user.messages | length }}</a>
             </h4>
           </li>
           <li class="stat">
             <p class="small">Following</p>
             <h4>
-              <a href="/users/{{ g.user.id }}/following"
-                >{{ g.user.following | length }}</a
-              >
+              <a href="/users/{{ g.user.id }}/following">{{ g.user.following | length }}</a>
             </h4>
           </li>
           <li class="stat">
             <p class="small">Followers</p>
             <h4>
-              <a href="/users/{{ g.user.id }}/followers"
-                >{{ g.user.followers | length }}</a
-              >
+              <a href="/users/{{ g.user.id }}/followers">{{ g.user.followers | length }}</a>
             </h4>
           </li>
         </ul>
@@ -45,36 +47,81 @@
   </aside>
 
   <div class="col-lg-6 col-md-8 col-sm-12">
-    <ul class="list-group" id="messages">
-      {% for msg in messages %}
-      <li class="list-group-item">
-        <a href="/messages/{{ msg.id  }}" class="message-link"></a>
-        <a href="/users/{{ msg.user.id }}">
-          <img src="{{ msg.user.image_url }}" alt="" class="timeline-image" />
-        </a>
-        <div class="message-area">
-          <a href="/users/{{ msg.user.id }}">@{{ msg.user.username }}</a>
-          <span class="text-muted"
-            >{{ msg.timestamp.strftime('%d %B %Y') }}</span
-          >
-          <p>{{ msg.text }}</p>
+    <div class="feed-header">
+      <h3>Home</h3>
+      <a href="/messages/new" class="btn btn-primary btn-sm">New Warble</a>
+    </div>
+
+    <ul class="list-group feed-list" id="messages">
+  {% for msg in messages %}
+  <li class="list-group-item">
+    <div class="message-card">
+      <div class="message-shell">
+        <div class="message-avatar-col">
+          <a href="/users/{{ msg.user.id }}">
+            <img
+              src="{{ msg.user.image_url }}"
+              alt="Image for {{ msg.user.username }}"
+              class="timeline-image feed-avatar"
+            >
+          </a>
         </div>
-        <form
-          method="POST"
-          action="{% if msg.id in liked_message_ids %}/users/remove_like/{{ msg.id }}{% else %}/users/add_like/{{ msg.id }}{% endif %}"
-          class="like-form"
-        >
-          <button
-            type="submit"
-            class="btn btn-sm {{ 'btn-primary' if msg.id in liked_message_ids else 'btn-secondary' }}"
-          >
-            <i class="fa fa-thumbs-up"></i>
-            <span class="like-count">{{ like_counts.get(msg.id, 0) }}</span>
-          </button>
-        </form>
-      </li>
-      {% endfor %}
-    </ul>
+
+        <div class="message-main-col">
+          <div class="message-top-row">
+            <div class="message-meta">
+              <a href="/users/{{ msg.user.id }}" class="message-username">
+                @{{ msg.user.username }}
+              </a>
+              <span class="message-date">
+                {{ msg.timestamp.strftime('%b %d, %Y') }}
+              </span>
+            </div>
+          </div>
+
+          <a href="/messages/{{ msg.id }}" class="message-body-link">
+            <p class="message-text">{{ msg.text }}</p>
+          </a>
+
+          <div class="message-footer">
+            <div class="message-footer-left">
+              <a href="/messages/{{ msg.id }}" class="message-action-link">
+                <i class="fa fa-comment"></i>
+                <span>View Post</span>
+              </a>
+            </div>
+
+            <div class="message-footer-right">
+              <form
+                method="POST"
+                action="{% if msg.id in liked_message_ids %}/users/remove_like/{{ msg.id }}{% else %}/users/add_like/{{ msg.id }}{% endif %}"
+                class="like-form"
+              >
+                <button
+                  type="submit"
+                  class="like-btn-modern {% if msg.id in liked_message_ids %}liked{% endif %}"
+                  aria-label="{% if msg.id in liked_message_ids %}Unlike{% else %}Like{% endif %}"
+                >
+                  <i class="fa fa-thumbs-up"></i>
+                  <span>{{ like_counts.get(msg.id, 0) }}</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </li>
+  {% else %}
+  <li class="list-group-item">
+    <div class="empty-feed">
+      <h5>No messages yet</h5>
+      <p>Follow users or create your first warble.</p>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
   </div>
+
 </div>
 {% endblock %}
