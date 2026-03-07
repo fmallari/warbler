@@ -1,26 +1,57 @@
 {% extends 'users/detail.html' %}
 {% block user_details %}
-  <div class="col-sm-6">
-    <ul class="list-group" id="messages">
-
-      {% for message in messages %}
-
-        <li class="list-group-item">
-          <a href="/messages/{{ message.id }}" class="message-link"/>
-
-          <a href="/users/{{ user.id }}">
-            <img src="{{ user.image_url }}" alt="user image" class="timeline-image">
-          </a>
-
-          <div class="message-area">
-            <a href="/users/{{ user.id }}">@{{ user.username }}</a>
-            <span class="text-muted">{{ message.timestamp.strftime('%d %B %Y') }}</span>
-            <p>{{ message.text }}</p>
+<div class="col-lg-9 col-md-8 col-sm-12">
+  <ul class="list-group feed-list" id="messages">
+    {% for message in messages %}
+    <li class="list-group-item">
+      <div class="message-card">
+        <div class="message-shell">
+          <div class="message-avatar-col">
+            <a href="/users/{{ user.id }}">
+              <img
+                src="{{ user.image_url }}"
+                alt="user image"
+                class="timeline-image feed-avatar"
+              >
+            </a>
           </div>
-        </li>
 
-      {% endfor %}
+          <div class="message-main-col">
+            <div class="message-top-row">
+              <div class="message-meta">
+                <a href="/users/{{ user.id }}" class="message-username">
+                  @{{ user.username }}
+                </a>
+                <span class="message-date">
+                  {{ message.timestamp.strftime('%b %d, %Y') }}
+                </span>
+              </div>
+            </div>
 
-    </ul>
-  </div>
+            <a href="/messages/{{ message.id }}" class="message-body-link">
+              <p class="message-text">{{ message.text }}</p>
+            </a>
+
+            <div class="message-footer">
+              <div class="message-footer-left">
+                <a href="/messages/{{ message.id }}" class="message-action-link">
+                  <i class="fa fa-comment"></i>
+                  <span>View Post</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+    {% else %}
+    <li class="list-group-item">
+      <div class="empty-feed">
+        <h5>No posts yet</h5>
+        <p>This user hasn’t posted anything yet.</p>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
 {% endblock %}
