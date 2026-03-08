@@ -1,57 +1,41 @@
-{% extends 'users/detail.html' %}
-{% block user_details %}
-<div class="col-lg-9 col-md-8 col-sm-12">
-  <ul class="list-group feed-list" id="messages">
-    {% for message in messages %}
-    <li class="list-group-item">
-      <div class="message-card">
-        <div class="message-shell">
-          <div class="message-avatar-col">
-            <a href="/users/{{ user.id }}">
-              <img
-                src="{{ user.image_url }}"
-                alt="Image for {{ user.username }}"
-                class="timeline-image feed-avatar"
-              >
-            </a>
-          </div>
+{% extends 'base.html' %}
+{% block content %}
 
-          <div class="message-main-col">
-            <div class="message-top-row">
-              <div class="message-meta">
-                <a href="/users/{{ user.id }}" class="message-username">
-                  @{{ user.username }}
-                </a>
-                <span class="message-date">
-                  {{ message.timestamp.strftime('%b %d, %Y') }}
-                </span>
-              </div>
-            </div>
+<div class="message-show-wrap">
+  <div class="message-show-card">
 
-            <a href="/messages/{{ message.id }}" class="message-body-link">
-              <p class="message-text">{{ message.text }}</p>
-            </a>
-
-            <div class="message-footer">
-              <div class="message-footer-left">
-                <a href="/messages/{{ message.id }}" class="message-action-link">
-                  <i class="fa fa-comment"></i>
-                  <span>View Post</span>
-                </a>
-              </div>
-            </div>
-          </div>
+    <div class="message-show-header">
+      <a href="/users/{{ message.user.id }}" class="message-show-user">
+        <img
+          src="{{ message.user.image_url }}"
+          alt="Image for {{ message.user.username }}"
+          class="message-show-avatar"
+        >
+        <div class="message-show-meta">
+          <h3>@{{ message.user.username }}</h3>
+          <p>{{ message.timestamp.strftime('%b %d, %Y') }}</p>
         </div>
-      </div>
-    </li>
-    {% else %}
-    <li class="list-group-item">
-      <div class="empty-feed">
-        <h5>No posts yet</h5>
-        <p>This user hasn’t posted anything yet.</p>
-      </div>
-    </li>
-    {% endfor %}
-  </ul>
+      </a>
+    </div>
+
+    <div class="message-show-body">
+      <p class="single-message">{{ message.text }}</p>
+    </div>
+
+    <div class="message-show-footer">
+      <a href="/users/{{ message.user.id }}" class="message-show-link">
+        <i class="fa fa-user"></i>
+        <span>View Profile</span>
+      </a>
+
+      {% if g.user and g.user.id == message.user.id %}
+      <form method="POST" action="/messages/{{ message.id }}/delete">
+        <button type="submit" class="btn btn-outline-danger btn-sm">Delete Post</button>
+      </form>
+      {% endif %}
+    </div>
+
+  </div>
 </div>
+
 {% endblock %}
