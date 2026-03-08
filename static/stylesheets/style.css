@@ -841,6 +841,125 @@ p.card-bio {
   font-weight: 700;
 }
 
+/* ================================ single message redesign */
+
+.message-show-wrap {
+  max-width: 820px;
+  margin: 40px auto 0;
+  padding: 0 16px;
+}
+
+.message-show-card {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-radius: 22px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+  padding: 28px;
+}
+
+.message-show-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.message-show-user {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.message-show-user:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+.message-show-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+}
+
+.message-show-meta h3 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #111827;
+}
+
+.message-show-meta p {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.message-show-body {
+  padding: 10px 0 22px;
+}
+
+.single-message {
+  font-size: 1.5rem;
+  line-height: 1.7;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: #1f2937;
+}
+
+.message-show-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 18px;
+  border-top: 1px solid rgba(15, 23, 42, 0.06);
+  gap: 12px;
+}
+
+.message-show-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.message-show-link:hover {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  .message-show-card {
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .message-show-avatar {
+    width: 54px;
+    height: 54px;
+  }
+
+  .message-show-meta h3 {
+    font-size: 1.15rem;
+  }
+
+  .single-message {
+    font-size: 1.2rem;
+    line-height: 1.6;
+  }
+
+  .message-show-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
 /* ================================ profile page refresh */
 
 .profile-page {
